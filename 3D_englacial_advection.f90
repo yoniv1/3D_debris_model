@@ -26,104 +26,16 @@ subroutine  debris_cover_main_englacial(H, HT, mask, G, G_obs, h_debris, margin,
       real, allocatable     :: ti_corr2(:,:)
 
 !-----------------------------------------------------------------------                              
-! Initialization of velocities (flip upside down)                                                                            
+! Initialization of velocities                                                                          
 !-----------------------------------------------------------------------                    
 
-! Flip velocity matrices    
-                                                   
-ui(:,:,1)=vx(:,:,21)
-ui(:,:,2)=vx(:,:,20)
-ui(:,:,3)=vx(:,:,19)
-ui(:,:,4)=vx(:,:,18)
-ui(:,:,5)=vx(:,:,17)
-ui(:,:,6)=vx(:,:,16)
-ui(:,:,7)=vx(:,:,15)
-ui(:,:,8)=vx(:,:,14)
-ui(:,:,9)=vx(:,:,13)
-ui(:,:,10)=vx(:,:,12)
-ui(:,:,11)=vx(:,:,11)
-ui(:,:,12)=vx(:,:,10)
-ui(:,:,13)=vx(:,:,9)
-ui(:,:,14)=vx(:,:,8)
-ui(:,:,15)=vx(:,:,7)
-ui(:,:,16)=vx(:,:,6)
-ui(:,:,17)=vx(:,:,5)
-ui(:,:,18)=vx(:,:,4)
-ui(:,:,19)=vx(:,:,3)
-ui(:,:,20)=vx(:,:,2)
-ui(:,:,21)=vx(:,:,1)
+! Velocities                                                      
+! ui = x-component
+! vi = y-component
+! wi = z-component
 
-!write(*,*),'flipping u complete...'         
-
-vi(:,:,1)=vy(:,:,21)
-vi(:,:,2)=vy(:,:,20)
-vi(:,:,3)=vy(:,:,19)
-vi(:,:,4)=vy(:,:,18)
-vi(:,:,5)=vy(:,:,17)
-vi(:,:,6)=vy(:,:,16)
-vi(:,:,7)=vy(:,:,15)
-vi(:,:,8)=vy(:,:,14)
-vi(:,:,9)=vy(:,:,13)
-vi(:,:,10)=vy(:,:,12)
-vi(:,:,11)=vy(:,:,11)
-vi(:,:,12)=vy(:,:,10)
-vi(:,:,13)=vy(:,:,9)
-vi(:,:,14)=vy(:,:,8)
-vi(:,:,15)=vy(:,:,7)
-vi(:,:,16)=vy(:,:,6)
-vi(:,:,17)=vy(:,:,5)
-vi(:,:,18)=vy(:,:,4)
-vi(:,:,19)=vy(:,:,3)
-vi(:,:,20)=vy(:,:,2)
-vi(:,:,21)=vy(:,:,1)
-
-!write(*,*),'flipping v complete...'    
-
-wi(:,:,1)=vzage(:,:,21)
-wi(:,:,2)=vzage(:,:,20)
-wi(:,:,3)=vzage(:,:,19)
-wi(:,:,4)=vzage(:,:,18)
-wi(:,:,5)=vzage(:,:,17)
-wi(:,:,6)=vzage(:,:,16)
-wi(:,:,7)=vzage(:,:,15)
-wi(:,:,8)=vzage(:,:,14)
-wi(:,:,9)=vzage(:,:,13)
-wi(:,:,10)=vzage(:,:,12)
-wi(:,:,11)=vzage(:,:,11)
-wi(:,:,12)=vzage(:,:,10)
-wi(:,:,13)=vzage(:,:,9)
-wi(:,:,14)=vzage(:,:,8)
-wi(:,:,15)=vzage(:,:,7)
-wi(:,:,16)=vzage(:,:,6)
-wi(:,:,17)=vzage(:,:,5)
-wi(:,:,18)=vzage(:,:,4)
-wi(:,:,19)=vzage(:,:,3)
-wi(:,:,20)=vzage(:,:,2)
-wi(:,:,21)=vzage(:,:,1)
-
-!write(*,*),'flipping w complete...'
-                                                                                                       
-za_eng(1)=za(21)
-za_eng(2)=za(20)
-za_eng(3)=za(19)
-za_eng(4)=za(18)
-za_eng(5)=za(17)
-za_eng(6)=za(16)
-za_eng(7)=za(15)
-za_eng(8)=za(14)
-za_eng(9)=za(13)
-za_eng(10)=za(12)
-za_eng(11)=za(11)
-za_eng(12)=za(10)
-za_eng(13)=za(9)
-za_eng(14)=za(8)
-za_eng(15)=za(7)
-za_eng(16)=za(6)
-za_eng(17)=za(5)
-za_eng(18)=za(4)
-za_eng(19)=za(3)
-za_eng(20)=za(2)
-za_eng(21)=za(1)
+! Vertical grid spacing                                                                                                    
+! za_eng
 
 !-----------------------------------------------------------------------        
 ! RUN THE ENGLACIAL DEBRIS CONCENTRATION MODEL
@@ -174,7 +86,7 @@ do while (yr_deng.le.numberofyears_eng)
           end do
          end do
        end do
-
+       
    endif
 
   ! Initialize                                                                                                   
@@ -571,18 +483,16 @@ do while (yr_deng.le.numberofyears_eng)
 
       do J=1,NY 
          do I=1,NX
-	         do K=1,NZ                                                                                                 
-	            IF((H(I,J,3).ge.0).and.(I.gt.1).and.(J.gt.1).and.(K.gt.1).and.(I.lt.NX).and.(J.lt.NY).and.(K.le.NZ))then
-                if((ti(I,J,K).gt.0))then
+	       do K=1,NZ                                                                                                 
+	           IF((H(I,J,3).ge.0).and.(I.gt.1).and.(J.gt.1).and.(K.gt.1).and.(I.lt.NX).and.(J.lt.NY).and.(K.le.NZ))then
+                     if((ti(I,J,K).gt.0))then
 
                      ! X-DIRECTION 
                        advel_x(I,J,K) = -(0.5*((abs(ui(I,J,K))*deltax_d - (dt_eng*((ui(I,J,K))**2))) / ti(I,J,K))) * (((ti(I,J,K)+ti(I+1,J,K))/2)-((ti(I,J,K)+ti(I-1,J,K))/2))/deltax_d - (((((dt_eng*(wi(I,J,K))/((-H(I,J,3)*dzeta(k))))*(dt_eng*(ui(I,J,K))/deltax_d)*deltax_d*(-H(I,J,3)*dzeta(k))))/(2*dt_eng)) / (ti(I,J,K)) * ((((ti(I,J,K)+ti(I,J,K+1))/2)-((ti(I,J,K)+ti(I,J,K-1))/2))/(-H(I,J,3)*dzeta(k)))) - (((vi(I,J,K)*ui(I,J,K)*dt_eng)/2) / ti(I,J,K) * ((((ti(I,J,K)+ti(I,J+1,K))/2)-((ti(I,J,K)+ti(I,J-1,K))/2))/deltax_d))
-
                      ! Y-DIRECTION 
-                       advel_y(I,J,K) = -(0.5*((abs(vi(I,J,K))*deltax_d - (dt_eng*((vi(I,J,K))**2))) / ti(I,J,K))) * (((ti(I,J,K)+ti(I,J+1,K))/2)-((ti(I,J,K)+ti(I,J-1,K))/2))/deltax_d - (((((dt_eng*(wi(I,J,K))/((-H(I,J,3)*dzeta(k))))*(dt_eng*(vi(I,J,K))/deltax_d)*deltax_d*(-H(I,J,3)*dzeta(k))))/(2*dt_eng)) / (ti(I,J,K)) * ((((ti(I,J,K)+ti(I,J,K+1))/2)-((ti(I,J,K)+ti(I,J,K-1))/2))/(-H(I,J,3)*dzeta(k))))  - (((ui(I,J,K)*vi(I,J,K)*dt_eng)/2) / ti(I,J,K) * ((((ti(I,J,K)+ti(I+1,J,K))/2)-((ti(I,J,K)+ti(I-1,J,K))/2))/deltax_d))
-                       advel_y(I,J,K) = 0 !!!!
+                       advel_y(I,J,K) = -(0.5*((abs(vi(I,J,K))*deltax_d - (dt_eng*((vi(I,J,K))**2))) / ti(I,J,K))) * (((ti(I,J,K)+ti(I,J+1,K))/2)-((ti(I,J,K)+ti(I,J-1,K))/2))/deltax_d - (((((dt_eng*(wi(I,J,K))/((-H(I,J,3)*dzeta(k))))*(dt_eng*(vi(I,J,K))/deltax_d)*deltax_d*(-H(I,J,3)*dzeta(k))))/(2*dt_eng)) / (ti(I,J,K)) * ((((ti(I,J,K)+ti(I,J,K+1))/2)-((ti(I,J,K)+ti(I,J,K-1))/2))/(-H(I,J,3)*dzeta(k)))) - (((ui(I,J,K)*vi(I,J,K)*dt_eng)/2) / ti(I,J,K) * ((((ti(I,J,K)+ti(I+1,J,K))/2)-((ti(I,J,K)+ti(I-1,J,K))/2))/deltax_d))
                      ! Z-DIRECTION
-                       advel_z(I,J,K) = -(2.5*((abs(wi(I,J,K))*(-H(I,J,3)*dzeta(k)) - (dt_eng*((wi(I,J,K))**2))) / ti(I,J,K))) * (((ti(I,J,K)+ti(I,J,K+1))/2)-((ti(I,J,K)+ti(I,J,K-1))/2))/(-H(I,J,3)*dzeta(k)) - ((((((dt_eng*(wi(I,J,K))/((-H(I,J,3)*dzeta(k))))*(dt_eng*(ui(I,J,K))/deltax_d)*deltax_d*(-H(I,J,3)*dzeta(k))))/(2*dt_eng)) / (ti(I,J,K)) * (((ti(I,J,K)+ti(I+1,J,K))/2)-((ti(I,J,K)+ti(I-1,J,K))/2))/deltax_d)) - ((((((dt_eng*(wi(I,J,K)))/(-H(I,J,3)*dzeta(k)))*(dt_eng*(vi(I,J,K))/deltax_d))*deltax_d*(-H(I,J,3)*dzeta(k)))/(2*dt_eng)) / (ti(I,J,K)) * ((((ti(I,J,K)+ti(I,J+1,K))/2)-((ti(I,J,K)+ti(I,J-1,K))/2))/(deltax_d)))
+                       advel_z(I,J,K) = -(0.5*((abs(wi(I,J,K))*(-H(I,J,3)*dzeta(k)) - (dt_eng*((wi(I,J,K))**2))) / ti(I,J,K))) * (((ti(I,J,K)+ti(I,J,K+1))/2)-((ti(I,J,K)+ti(I,J,K-1))/2))/(-H(I,J,3)*dzeta(k)) - ((((((dt_eng*(wi(I,J,K))/((-H(I,J,3)*dzeta(k))))*(dt_eng*(ui(I,J,K))/deltax_d)*deltax_d*(-H(I,J,3)*dzeta(k))))/(2*dt_eng)) / (ti(I,J,K)) * (((ti(I,J,K)+ti(I+1,J,K))/2)-((ti(I,J,K)+ti(I-1,J,K))/2))/deltax_d)) - ((((((dt_eng*(wi(I,J,K)))/(-H(I,J,3)*dzeta(k)))*(dt_eng*(vi(I,J,K))/deltax_d))*deltax_d*(-H(I,J,3)*dzeta(k)))/(2*dt_eng)) / (ti(I,J,K)) * ((((ti(I,J,K)+ti(I,J+1,K))/2)-((ti(I,J,K)+ti(I,J-1,K))/2))/(deltax_d)))
                     
                      ! ANTI-DIFFUSION VELOCITY
                      vel_diff(I,J,K) = sqrt((advel_x(I,J,K)**2)+(advel_y(I,J,K)**2)+(advel_z(I,J,K)**2))
@@ -632,9 +542,9 @@ do while (yr_deng.le.numberofyears_eng)
                 ! cccccccccc START ADVECTION SCHEME cccccccccccc
                 ! cccccccccccccccccccccccccccccccccccccccccccccc
 
-		            ! cccccccccccccccccccccccccccccccc
+		! cccccccccccccccccccccccccccccccc
                 ! cccccccccc X-DIRECTION ccccccccc
-		            ! cccccccccccccccccccccccccccccccc
+		! cccccccccccccccccccccccccccccccc
 
                   if (advel_x(I,J,K).lt.0)then
                      term1_debris_eng_x(I,J,K) = -advel_x(I,J,K) * (ti(I+1,J,K)-ti(I,J,K)) /deltax_d - (1/H(I,J,3)) * (ti(I,J,K+1)-ti(I,J,K))/dzeta(K) * (1 - za_eng(K)) * advel_x(I,J,K) * ((H(I+1,J,3)-H(I,J,3)) /deltax_d) - ti(I,J,K) * (advel_x(I+1,J,K)-advel_x(I,J,K)) /deltax_d - (1/H(I,J,3)) * (advel_x(I,J,K+1)-advel_x(I,J,K))/dzeta(K) * (1 - za_eng(K)) * ti(I,J,K) * ((H(I+1,J,3)-H(I,J,3)) /deltax_d)
@@ -642,21 +552,19 @@ do while (yr_deng.le.numberofyears_eng)
                      term1_debris_eng_x(I,J,K) = -advel_x(I,J,K) * (ti(I,J,K)-ti(I-1,J,K)) /deltax_d - (1/H(I,J,3)) * (ti(I,J,K)-ti(I,J,K-1))/dzeta(K) * (1 - za_eng(K)) * advel_x(I,J,K) * ((H(I,J,3)-H(I-1,J,3)) /deltax_d) - ti(I,J,K) * (advel_x(I,J,K)-advel_x(I-1,J,K)) /deltax_d - (1/H(I,J,3)) * (advel_x(I,J,K)-advel_x(I,J,K-1))/dzeta(K) * (1 - za_eng(K)) * ti(I,J,K) * ((H(I,J,3)-H(I-1,J,3)) /deltax_d)
                   endif
 
-		            ! cccccccccccccccccccccccccccccccc
+		! cccccccccccccccccccccccccccccccc
                 ! cccccccccc Y-DIRECTION ccccccccc
-	            	! cccccccccccccccccccccccccccccccc
+	        ! cccccccccccccccccccccccccccccccc
 
                   if (advel_y(I,J,K).lt.0)then
                      term1_debris_eng_y(I,J,K) = -advel_y(I,J,K) * (ti(I,J+1,K)-ti(I,J,K)) /deltax_d - (1/H(I,J,3)) * (ti(I,J,K+1)-ti(I,J,K))/dzeta(K) * (1 - za_eng(K)) * advel_y(I,J,K) * ((H(I,J+1,3)-H(I,J,3)) /deltax_d) - ti(I,J,K) * (advel_y(I,J+1,K)-advel_y(I,J,K)) /deltax_d - (1/H(I,J,3)) * (advel_y(I,J,K+1)-advel_y(I,J,K))/dzeta(K) * (1 - za_eng(K)) * ti(I,J,K) * ((H(I,J+1,3)-H(I,J,3)) /deltax_d)
-                     term1_debris_eng_y(I,J,K) = 0 !!!
                   else if (advel_y(I,J,K).ge.0)then
                      term1_debris_eng_y(I,J,K) = -advel_y(I,J,K) * (ti(I,J,K)-ti(I,J-1,K)) /deltax_d - (1/H(I,J,3)) * (ti(I,J,K)-ti(I,J,K-1))/dzeta(K) * (1 - za_eng(K)) * advel_y(I,J,K) * ((H(I,J,3)-H(I,J-1,3)) /deltax_d) - ti(I,J,K) * (advel_y(I,J,K)-advel_y(I,J-1,K)) /deltax_d - (1/H(I,J,3)) * (advel_y(I,J,K)-advel_y(I,J,K-1))/dzeta(K) * (1 - za_eng(K)) * ti(I,J,K) * ((H(I,J,3)-H(I,J-1,3)) /deltax_d)
-                     term1_debris_eng_y(I,J,K) = 0 !!!
                  end if
 
-	            	! cccccccccccccccccccccccccccccccc
+	        ! cccccccccccccccccccccccccccccccc
                 ! cccccccccc Z-DIRECTION ccccccccc
-		            ! cccccccccccccccccccccccccccccccc
+		! cccccccccccccccccccccccccccccccc
 
                   if (advel_z(I,J,K).lt.0)then
                      term1_debris_eng_z(I,J,K) = -advel_z(I,J,K) * (-1/H(I,J,3)) * (ti(I,J,K+1)-ti(I,J,K))/dzeta(K) - ti(I,J,K) * (-1/H(I,J,3)) * (advel_z(I,J,K+1)-advel_z(I,J,K))/dzeta(K)
@@ -681,9 +589,9 @@ do while (yr_deng.le.numberofyears_eng)
                 ! Calculate new debris concentration
 
                  if (wi(I,J,K).le.0)then
-                    ti_diff(I,J,K) = 1*deltat_smolar_engl*(term1_debris_eng_x(I,J,K) + term1_debris_eng_y(I,J,K) + term1_debris_eng_z(I,J,K))
+                    ti_diff(I,J,K) = deltat_smolar_engl*(term1_debris_eng_x(I,J,K) + term1_debris_eng_y(I,J,K) + term1_debris_eng_z(I,J,K))
                  elseif (wi(I,J,K).gt.0)then
-                    ti_diff(I,J,K) = 5*deltat_smolar_engl*(term1_debris_eng_x(I,J,K) + term1_debris_eng_y(I,J,K) + term1_debris_eng_z(I,J,K))
+                    ti_diff(I,J,K) = deltat_smolar_engl*(term1_debris_eng_x(I,J,K) + term1_debris_eng_y(I,J,K) + term1_debris_eng_z(I,J,K))
                  endif
 
                  if (ti_diff(I,J,K).lt.0)then
