@@ -414,17 +414,17 @@ do while (yr_deng.le.numberofyears_eng)
                      
                if (ti(I,J,K).lt.1e-3)then
                     ti(I,J,K) = 0.
-	                  ti_new(I,J,K) = 0.
+	            ti_new(I,J,K) = 0.
                end if
 
                if ((sqrt(vx(I,J,1) * vx(I,J,1) + vy(I,J,1) * vy(I,J,1)).eq.0).and.(ti(I,J,K).gt.0))then
                     ti(I,J,K) = 0.
-		                ti_new(I,J,K) = 0.
+		    ti_new(I,J,K) = 0.
                end if
 
                if (H(I,J,3).eq.0)then
                     ti(I,J,K) = 0.
-		                ti_new(I,J,K) = 0.
+		    ti_new(I,J,K) = 0.
                end if
                
                if (isnan(ti(I,J,K)))then
@@ -570,7 +570,7 @@ do while (yr_deng.le.numberofyears_eng)
                      term1_debris_eng_z(I,J,K) = -advel_z(I,J,K) * (-1/H(I,J,3)) * (ti(I,J,K+1)-ti(I,J,K))/dzeta(K) - ti(I,J,K) * (-1/H(I,J,3)) * (advel_z(I,J,K+1)-advel_z(I,J,K))/dzeta(K)
                   else if (advel_z(I,J,K).ge.0)then
                      term1_debris_eng_z(I,J,K) = -advel_z(I,J,K) * (-1/H(I,J,3)) * (ti(I,J,K)-ti(I,J,K-1))/dzeta(K) - ti(I,J,K) * (-1/H(I,J,3)) * (advel_z(I,J,K)-advel_z(I,J,K-1))/dzeta(K)
-		              end if
+		  end if
                                                                          
                ! cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc  
                ! cccccccccccccccccccc BOUNDAARY CONDITIONS cccccccccccccccccccccc
